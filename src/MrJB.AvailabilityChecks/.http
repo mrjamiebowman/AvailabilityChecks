@@ -1,0 +1,6 @@
+@MrJB.AvailabilityChecks_HostAddress = http://localhost:5211
+
+GET {{MrJB.AvailabilityChecks_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
