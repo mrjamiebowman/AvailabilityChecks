@@ -68,7 +68,6 @@ public class Worker : BackgroundService
         try
         {
             using var request = new HttpRequestMessage(HttpMethod.Get, site.Url);
-
             using var response = await client.SendAsync(request, cancellationToken);
 
             statusCode = (int)response.StatusCode;
@@ -86,7 +85,7 @@ public class Worker : BackgroundService
 
             _logger.LogError(
                 ex,
-                "Availability check failed for {Name} at {Url}",
+                "Availability check failed for {name} at {url}",
                 site.Name,
                 site.Url);
         }
@@ -96,6 +95,16 @@ public class Worker : BackgroundService
         }
 
         var duration = stopwatch.Elapsed;
+
+        if (success == true)
+        {
+            _logger.LogInformation(
+                "Availability check for {name} at {url}, ms {milliseconds}",
+                site.Name,
+                site.Url,
+                duration
+            );
+        }
 
         var properties = new Dictionary<string, string>
         {

@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "http": {
+    "LOCAL": {
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -8,10 +8,10 @@
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5211"
     },
-    "https": {
+    "PROD": {
       "commandName": "Project",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Production"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7127;http://localhost:5211"

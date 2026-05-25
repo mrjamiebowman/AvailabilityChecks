@@ -10,3 +10,44 @@ If there were ever a sitatuation and we need to reduce traffic, the service is a
 ```
 https://localhost:7127/up/log?logKey=3484991B-8304-4B3E-8784-BBDABF6DE346
 ```
+
+## appsettings.Production.json
+This is a samples settings file. Set your values in here and this will kick off the service.
+
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=...;IngestionEndpoint=...",
+  "OTEL_SERVICE_NAME": "mrjb-availabilitychecks",
+  "Application": {
+    "LogKey": "3484991B-8304-4B3E-8784-BBDABF6DE346"
+  },
+  "AvailabilityChecks": [
+    {
+      "Name": "Auth Internal Health",
+      "Url": "https://auth.internal.example.com/health",
+      "Environment": "prod",
+      "Location": "k8s-internal"
+    },
+    {
+      "Name": "Admin Internal Health",
+      "Url": "https://admin.internal.example.com/health",
+      "Environment": "prod",
+      "Location": "k8s-internal"
+    }
+  ]
+}
+```
+
+## Azure App Config + Key Vault
+You can also use this with Azure App Config & Key Vault to store configuration. This may work better in a distributed environment as it uses a centralized configuration store.   
+
+
+
+
