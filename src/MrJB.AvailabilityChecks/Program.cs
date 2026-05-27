@@ -50,6 +50,8 @@ builder.ConfigureAzureAppConfiguration();
 
 builder.Host.UseSerilog((context, services, loggerConfiguration) =>
 {
+    var otlpEndpoint = context.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
+
     loggerConfiguration
         .ReadFrom.Configuration(context.Configuration)
         .ReadFrom.Services(services)
@@ -59,10 +61,19 @@ builder.Host.UseSerilog((context, services, loggerConfiguration) =>
         .WriteTo.Console(
             theme: AnsiConsoleTheme.Literate,
             outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}"
-        )
-    ;
-});
+        );
 
+    // serilog dumps the default logger and replaces it...
+    // without this serilog will block logs being shipped to otel/aspire.
+    // i.e., removet his an structured logs goes away...
+    if (!string.IsNullOrWhiteSpace(otlpEndpoint))
+    {
+        loggerConfiguration.WriteTo.OpenTelemetry(options =>
+        {
+            options.Endpoint = otlpEndpoint;
+        });
+    }
+});
 
 /******************************************/
 /*             application                */
