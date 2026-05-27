@@ -1,5 +1,5 @@
 {
   "appHost": {
-    "path": "MrJB.AvailabilityChecks.AppHost/MrJB.AvailabilityChecks.AppHost.csproj"
+    "path": "aspire/MrJB.AvailabilityChecks.AppHost/MrJB.AvailabilityChecks.AppHost.csproj"
   }
 }
