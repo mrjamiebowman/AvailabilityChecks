@@ -29,7 +29,7 @@ public static class Builder
             String.IsNullOrWhiteSpace(secret)
             )
         {
-            Log.Logger.Information("[+] Azure App Configuration & Key Vault settings not found. Aborting setup.");
+            Log.Logger.Information("[+] Azure App Configuration & Key Vault settings not found.");
             return builder;
         }
 

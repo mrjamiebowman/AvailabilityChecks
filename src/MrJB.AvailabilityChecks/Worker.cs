@@ -108,18 +108,18 @@ public class Worker : BackgroundService
 
         var properties = new Dictionary<string, string>
         {
-            ["url"] = site.Url,
-            ["environment"] = site.Environment ?? "unknown"
+            [Spans.Url] = site.Url,
+            [Spans.Environment] = site.Environment ?? "unknown"
         };
 
         if (statusCode.HasValue)
         {
-            properties["statusCode"] = statusCode.Value.ToString();
+            properties[Spans.StatusCode] = statusCode.Value.ToString();
         }
 
         var metrics = new Dictionary<string, double>
         {
-            ["durationMs"] = duration.TotalMilliseconds
+            [Spans.DurationMs] = duration.TotalMilliseconds
         };
 
         // This is what makes it show up in the Application Insights Availability blade.
@@ -135,19 +135,18 @@ public class Worker : BackgroundService
 
         // Optional but useful for OTel / Azure Monitor Metrics / alerts.
         OTel.Meters.AvailabilityDurationMs.Record(duration.TotalMilliseconds,
-            new KeyValuePair<string, object?>("site", site.Name),
-            new KeyValuePair<string, object?>("environment", site.Environment),
-            new KeyValuePair<string, object?>("success", success));
+            new KeyValuePair<string, object?>(Spans.Site, site.Name),
+            new KeyValuePair<string, object?>(Spans.Environment, site.Environment),
+            new KeyValuePair<string, object?>(Spans.Status, success)
+        );
 
-        if (!success)
-        {
-            var tagList = new TagList() {
-                new KeyValuePair<string, object?>("site", site.Name),
-                new KeyValuePair<string, object?>("environment", site.Environment)
-            };
+        var tagList = new TagList() {
+            new KeyValuePair<string, object?>(Spans.Site, site.Name),
+            new KeyValuePair<string, object?>(Spans.Environment, site.Environment),
+            new KeyValuePair<string, object?>(Spans.Status, success)
+        };
 
-            OTel.Meters.AddAvailabilityCheck(1, tagList);
-        }
+        OTel.Meters.AddAvailabilityCheck(1, tagList);
 
         _logger.LogInformation("Availability check {Name} {Success} in {DurationMs}ms",
             site.Name,
