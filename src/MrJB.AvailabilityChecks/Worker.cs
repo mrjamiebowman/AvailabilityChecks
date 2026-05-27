@@ -36,8 +36,12 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        _logger.LogInformation("[+] Starting Availability Checks Worker...");
+
         while (!stoppingToken.IsCancellationRequested)
         {
+            using var activity = OTel.ActivitySource.StartActivity($"{nameof(Worker)}.{nameof(ExecuteAsync)}");
+
             // task list
             List<Task> processSitesTask = new List<Task>();
 
@@ -49,13 +53,19 @@ public class Worker : BackgroundService
             // process
             await Task.WhenAll(processSitesTask);
 
+            activity.Stop();
+
             // wait...
-            await Task.Delay(TimeSpan.FromMinutes(_applicationConfiguration.Delay), stoppingToken);
+            await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
+            //await Task.Delay(TimeSpan.FromMinutes(_applicationConfiguration.Delay), stoppingToken);
         }
     }
 
     private async Task CheckSiteAsync(AvailaibilityConfiguration site, CancellationToken cancellationToken)
     {
+        using var activity = OTel.ActivitySource.StartActivity($"{nameof(Worker)}.{nameof(CheckSiteAsync)}");
+        activity?.AddTag(Spans.Site, site);
+
         var client = _httpClientFactory.CreateClient("availability");
 
         var stopwatch = Stopwatch.StartNew();
@@ -76,12 +86,21 @@ public class Worker : BackgroundService
             if (!success)
             {
                 message = $"Unexpected status code: {(int)response.StatusCode} {response.ReasonPhrase}";
+                activity?.SetStatus(ActivityStatusCode.Error);
+                activity?.AddTag(Spans.Status, Spans.Values.Failure);
+            }
+            else
+            {
+                activity?.SetStatus(ActivityStatusCode.Ok);
+                activity?.AddTag(Spans.Status, Spans.Values.Success);
             }
         }
         catch (Exception ex)
         {
             success = false;
             message = ex.Message;
+
+            activity?.SetStatus(ActivityStatusCode.Error);
 
             _logger.LogError(
                 ex,
