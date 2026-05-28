@@ -60,6 +60,29 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          env:
+            - name: AZURE_TENANT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "mrjb-availabilitychecks.fullname" . }}
+                  key: azure-tenant-id
+            - name: AZURE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "mrjb-availabilitychecks.fullname" . }}
+                  key: azure-client-id
+            - name: AZURE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "mrjb-availabilitychecks.fullname" . }}
+                  key: azure-client-secret
+            - name: AZURE_APPCONFIG_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "mrjb-availabilitychecks.fullname" . }}
+                  key: azure-appconfig-connection-string
+            - name: AZURE_APPCONFIG_LABEL_FILTER
+              value: {{ .Values.azureAppConfig.labelFilter | quote }}
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}

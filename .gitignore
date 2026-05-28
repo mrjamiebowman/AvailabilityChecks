@@ -4,6 +4,7 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 appsettings.*.json
+charts/mrjb-availabilitychecks/values.*.yaml
 
 # User-specific files
 *.rsuser
