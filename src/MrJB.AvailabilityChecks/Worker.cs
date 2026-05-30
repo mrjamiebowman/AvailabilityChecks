@@ -58,8 +58,7 @@ public class Worker : BackgroundService
             activity?.Stop();
 
             // wait...
-            await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
-            //await Task.Delay(TimeSpan.FromMinutes(_applicationConfiguration.Delay), stoppingToken);
+            await Task.Delay(TimeSpan.FromMinutes(_applicationConfiguration.Delay), stoppingToken);
         }
     }
 
