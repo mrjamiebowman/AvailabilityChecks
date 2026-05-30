@@ -9,7 +9,7 @@ public static class OTel
 
     public static string ServiceVersion { get; set; } = "1.0.0";
 
-    public static string BasePath { get; set; } = "mrjb.availabilitychecks";
+    public static string BasePath { get; set; } = "mrjamiebowman.availabilitychecks";
 
     public static readonly ActivitySource ActivitySource = new ActivitySource(ApplicationName);
 
@@ -28,7 +28,7 @@ public static class OTel
 
         public static class Names
         {
-            public static string UserKnownIssues = $"{BasePath}.availabilitycheck";
+            public static string UserKnownIssues = $"{BasePath}.check";
         }
 
         public static void AddAvailabilityCheck(int c = 1, TagList tagList = default) => AvailabilityCheck.Add(c, tagList);

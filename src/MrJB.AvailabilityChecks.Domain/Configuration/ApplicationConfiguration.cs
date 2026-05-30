@@ -15,4 +15,12 @@ public class ApplicationConfiguration
     public int Throughput { get; set; } = 5;
 
     public string? LogKey { get; set; }
+
+    public CollectorType? CollectorType { get; set; }
+}
+
+public enum CollectorType
+{
+    OTel,
+    ApplicationInsights
 }

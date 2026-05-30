@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
+using MrJB.AvailabilityChecks.Domain.Configuration;
 using MrJB.AvailabilityChecks.ServiceDefaults;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Microsoft.Extensions.Configuration.Binder;
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -86,20 +88,24 @@ public static class Extensions
 
     private static TBuilder AddOpenTelemetryExporters<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
-        var useOtlpExporter = !string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]);
+        var applicationConfiguration = new ApplicationConfiguration();
+        //builder.Configuration.GetSection(ApplicationConfiguration.Position).Bind(applicationConfiguration);
 
-        if (useOtlpExporter)
-        {
-            builder.Services.AddOpenTelemetry().UseOtlpExporter();
-        } else
+        if (applicationConfiguration.CollectorType == CollectorType.ApplicationInsights)
         {
             // Azure Monitor exporter (requires the Azure.Monitor.OpenTelemetry.AspNetCore package)
             if (!string.IsNullOrEmpty(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]))
             {
-                builder.Services.AddOpenTelemetry().UseAzureMonitor();
+                throw new ArgumentNullException("Application Insights Connection String is not configured. Please set the APPLICATIONINSIGHTS_CONNECTION_STRING environment variable or configuration setting.");
             }
+
+            builder.Services.AddOpenTelemetry().UseAzureMonitor();
         }
-        
+        else
+        {
+            builder.Services.AddOpenTelemetry().UseOtlpExporter();
+        }
+
         return builder;
     }
 
