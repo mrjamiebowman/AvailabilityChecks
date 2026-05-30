@@ -1,3 +1,6 @@
+using Azure.Monitor.OpenTelemetry.AspNetCore;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.HttpOverrides;
 using MrJB.AvailabilityChecks;
 using MrJB.AvailabilityChecks.Domain.Configuration;
@@ -44,6 +47,11 @@ if (builder.Environment.IsDevelopment())
 // azure app config
 builder.ConfigureAzureAppConfiguration();
 
+// application configuration
+var applicationConfiguration = new ApplicationConfiguration();
+builder.Configuration.GetSection(ApplicationConfiguration.Position).Bind(applicationConfiguration);
+builder.Services.AddSingleton(applicationConfiguration);
+
 /******************************************/
 /*                serilog                 */
 /******************************************/
@@ -80,11 +88,7 @@ builder.Host.UseSerilog((context, services, loggerConfiguration) =>
 /******************************************/
 
 // configuration
-var connectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
-
-var applicationConfiguration = new ApplicationConfiguration();
-builder.Configuration.GetSection(ApplicationConfiguration.Position).Bind(applicationConfiguration);
-builder.Services.AddSingleton(applicationConfiguration);
+var applicationInsightsConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
 
 var availaibilityConfigurations = builder.Configuration.GetSection("AvailabilityChecks").Get<List<AvailaibilityConfiguration>>() ?? [];
 builder.Services.AddSingleton(availaibilityConfigurations);
@@ -96,9 +100,21 @@ builder.Services.AddHttpClient("availability")
         client.Timeout = TimeSpan.FromSeconds(10);
     });
 
-// application insights
-builder.Services.AddApplicationInsightsTelemetryWorkerService(options => {
-    options.ConnectionString = connectionString;
+// OpenTelemetry -> Azure Monitor / App Insights
+builder.Services
+    .AddOpenTelemetry()
+    .UseAzureMonitor(options =>
+    {
+        options.ConnectionString = applicationInsightsConnectionString;
+    });
+
+// Classic Application Insights client for TrackAvailability
+builder.Services.AddSingleton(sp =>
+{
+    var configuration = TelemetryConfiguration.CreateDefault();
+    configuration.ConnectionString = applicationInsightsConnectionString;
+
+    return new TelemetryClient(configuration);
 });
 
 // bootstrapping

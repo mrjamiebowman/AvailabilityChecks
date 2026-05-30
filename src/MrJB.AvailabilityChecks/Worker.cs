@@ -1,7 +1,9 @@
 ﻿using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
 using MrJB.AvailabilityChecks.Domain.Configuration;
 using MrJB.AvailabilityChecks.ServiceDefaults;
 using System.Diagnostics;
+using static Google.Protobuf.Reflection.SourceCodeInfo.Types;
 
 namespace MrJB.AvailabilityChecks;
 
@@ -53,7 +55,7 @@ public class Worker : BackgroundService
             // process
             await Task.WhenAll(processSitesTask);
 
-            activity.Stop();
+            activity?.Stop();
 
             // wait...
             await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
@@ -142,15 +144,21 @@ public class Worker : BackgroundService
         };
 
         // This is what makes it show up in the Application Insights Availability blade.
-        _telemetryClient.TrackAvailability(
-            name: site.Name,
-            timeStamp: timestamp,
-            duration: duration,
-            runLocation: site.Location ?? Environment.MachineName,
-            success: success,
-            message: message,
-            properties: properties
-        );
+        var availability = new AvailabilityTelemetry
+        {
+            Name = site.Name,
+            RunLocation = site.Location ?? Environment.MachineName,
+            Timestamp = timestamp,
+            Duration = duration,
+            Success = success,
+            Message = message
+        };
+
+        availability.Properties["url"] = site.Url;
+        availability.Properties["machine"] = Environment.MachineName;
+        availability.Properties["environment"] = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Unknown";
+
+        _telemetryClient.TrackAvailability(availability);
 
         // Optional but useful for OTel / Azure Monitor Metrics / alerts.
         OTel.Meters.AvailabilityDurationMs.Record(duration.TotalMilliseconds,
@@ -172,6 +180,6 @@ public class Worker : BackgroundService
             success ? "succeeded" : "failed",
             duration.TotalMilliseconds);
 
-        _telemetryClient.Flush();
+        await _telemetryClient.FlushAsync(cancellationToken);
     }
 }
