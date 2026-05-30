@@ -11,7 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 /*                logging                 */
 /******************************************/
 
-// logger
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
@@ -20,11 +19,8 @@ Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
     .WriteTo.Console(
         theme: AnsiConsoleTheme.Literate,
-        outputTemplate:
-            "[{Timestamp:HH:mm:ss} {Level:u3}] " +
-            "{Message:lj} " +
-            "{Properties:j}" +
-            "{NewLine}{Exception}")
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}"
+    )
     .CreateBootstrapLogger();
 
 Log.Logger.Information("[+] Starting up AvailabilityChecks, Environment: {environment}", builder.Environment.EnvironmentName);
@@ -33,15 +29,10 @@ Log.Logger.Information("[+] Starting up AvailabilityChecks, Environment: {enviro
 /*            configuration               */
 /******************************************/
 
-// boostrap: configuration
 builder.Configuration
     .SetBasePath(AppContext.BaseDirectory)
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddJsonFile(
-        $"appsettings.{builder.Environment.EnvironmentName}.json",
-        optional: true,
-        reloadOnChange: true)
-    .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
 // user secrets
@@ -57,14 +48,31 @@ builder.ConfigureAzureAppConfiguration();
 /*                serilog                 */
 /******************************************/
 
-builder.Services.AddSerilog((services, loggerConfiguration) =>
+builder.Host.UseSerilog((context, services, loggerConfiguration) =>
 {
+    var otlpEndpoint = context.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
+
     loggerConfiguration
-        .ReadFrom.Configuration(builder.Configuration)
+        .ReadFrom.Configuration(context.Configuration)
         .ReadFrom.Services(services)
         .Enrich.FromLogContext()
-        .Enrich.WithProperty("Application", builder.Environment.ApplicationName)
-        .Enrich.WithProperty("Environment", builder.Environment.EnvironmentName);
+        .Enrich.WithProperty("Application", context.HostingEnvironment.ApplicationName)
+        .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
+        .WriteTo.Console(
+            theme: AnsiConsoleTheme.Literate,
+            outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}"
+        );
+
+    // serilog dumps the default logger and replaces it...
+    // without this serilog will block logs being shipped to otel/aspire.
+    // i.e., removet his an structured logs goes away...
+    if (!string.IsNullOrWhiteSpace(otlpEndpoint))
+    {
+        loggerConfiguration.WriteTo.OpenTelemetry(options =>
+        {
+            options.Endpoint = otlpEndpoint;
+        });
+    }
 });
 
 /******************************************/
@@ -116,7 +124,7 @@ var forwardedHeadersOptions = new ForwardedHeadersOptions
 };
 
 // If you don’t want to maintain proxy IPs in-cluster:
-forwardedHeadersOptions.KnownNetworks.Clear();
+forwardedHeadersOptions.KnownIPNetworks.Clear();
 forwardedHeadersOptions.KnownProxies.Clear();
 
 app.UseForwardedHeaders(forwardedHeadersOptions);

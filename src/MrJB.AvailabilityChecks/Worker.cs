@@ -36,8 +36,12 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        _logger.LogInformation("[+] Starting Availability Checks Worker...");
+
         while (!stoppingToken.IsCancellationRequested)
         {
+            using var activity = OTel.ActivitySource.StartActivity($"{nameof(Worker)}.{nameof(ExecuteAsync)}");
+
             // task list
             List<Task> processSitesTask = new List<Task>();
 
@@ -49,13 +53,19 @@ public class Worker : BackgroundService
             // process
             await Task.WhenAll(processSitesTask);
 
+            activity.Stop();
+
             // wait...
-            await Task.Delay(TimeSpan.FromMinutes(_applicationConfiguration.Delay), stoppingToken);
+            await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
+            //await Task.Delay(TimeSpan.FromMinutes(_applicationConfiguration.Delay), stoppingToken);
         }
     }
 
     private async Task CheckSiteAsync(AvailaibilityConfiguration site, CancellationToken cancellationToken)
     {
+        using var activity = OTel.ActivitySource.StartActivity($"{nameof(Worker)}.{nameof(CheckSiteAsync)}");
+        activity?.AddTag(Spans.Site, site);
+
         var client = _httpClientFactory.CreateClient("availability");
 
         var stopwatch = Stopwatch.StartNew();
@@ -76,12 +86,21 @@ public class Worker : BackgroundService
             if (!success)
             {
                 message = $"Unexpected status code: {(int)response.StatusCode} {response.ReasonPhrase}";
+                activity?.SetStatus(ActivityStatusCode.Error);
+                activity?.AddTag(Spans.Status, Spans.Values.Failure);
+            }
+            else
+            {
+                activity?.SetStatus(ActivityStatusCode.Ok);
+                activity?.AddTag(Spans.Status, Spans.Values.Success);
             }
         }
         catch (Exception ex)
         {
             success = false;
             message = ex.Message;
+
+            activity?.SetStatus(ActivityStatusCode.Error);
 
             _logger.LogError(
                 ex,
@@ -108,18 +127,18 @@ public class Worker : BackgroundService
 
         var properties = new Dictionary<string, string>
         {
-            ["url"] = site.Url,
-            ["environment"] = site.Environment ?? "unknown"
+            [Spans.Url] = site.Url,
+            [Spans.Environment] = site.Environment ?? "unknown"
         };
 
         if (statusCode.HasValue)
         {
-            properties["statusCode"] = statusCode.Value.ToString();
+            properties[Spans.StatusCode] = statusCode.Value.ToString();
         }
 
         var metrics = new Dictionary<string, double>
         {
-            ["durationMs"] = duration.TotalMilliseconds
+            [Spans.DurationMs] = duration.TotalMilliseconds
         };
 
         // This is what makes it show up in the Application Insights Availability blade.
@@ -135,19 +154,18 @@ public class Worker : BackgroundService
 
         // Optional but useful for OTel / Azure Monitor Metrics / alerts.
         OTel.Meters.AvailabilityDurationMs.Record(duration.TotalMilliseconds,
-            new KeyValuePair<string, object?>("site", site.Name),
-            new KeyValuePair<string, object?>("environment", site.Environment),
-            new KeyValuePair<string, object?>("success", success));
+            new KeyValuePair<string, object?>(Spans.Site, site.Name),
+            new KeyValuePair<string, object?>(Spans.Environment, site.Environment),
+            new KeyValuePair<string, object?>(Spans.Status, success)
+        );
 
-        if (!success)
-        {
-            var tagList = new TagList() {
-                new KeyValuePair<string, object?>("site", site.Name),
-                new KeyValuePair<string, object?>("environment", site.Environment)
-            };
+        var tagList = new TagList() {
+            new KeyValuePair<string, object?>(Spans.Site, site.Name),
+            new KeyValuePair<string, object?>(Spans.Environment, site.Environment),
+            new KeyValuePair<string, object?>(Spans.Status, success)
+        };
 
-            OTel.Meters.AddAvailabilityCheck(1, tagList);
-        }
+        OTel.Meters.AddAvailabilityCheck(1, tagList);
 
         _logger.LogInformation("Availability check {Name} {Success} in {DurationMs}ms",
             site.Name,
