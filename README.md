@@ -31,13 +31,13 @@ This is a samples settings file. Set your values in here and this will kick off 
   "AvailabilityChecks": [
     {
       "Name": "Auth Internal Health",
-      "Url": "https://auth.internal.example.com/health",
+      "Url": "https://auth.internal.example.com",
       "Environment": "prod",
       "Location": "k8s-internal"
     },
     {
       "Name": "Admin Internal Health",
-      "Url": "https://admin.internal.example.com/health",
+      "Url": "https://admin.internal.example.com",
       "Environment": "prod",
       "Location": "k8s-internal"
     }
