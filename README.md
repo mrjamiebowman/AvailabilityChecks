@@ -1,5 +1,5 @@
 # .NET: Application Insights Availability Checks
-This is a .NET application that runs in Kubernetes, that is configuration driven, and will monitor internal web applications.   
+Application Insights runs availability checks from the public internet and cannot access private networks. This tool is a containerized .NET application that runs in Kubernetes, that is configuration driven, and will monitor internal web applications.   
 
 # Log Test
 I always include a key in here, it's not entirely necessary but it does add an extra gate in the process. This can reduce exploitation.   
