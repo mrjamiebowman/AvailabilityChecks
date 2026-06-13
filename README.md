@@ -20,7 +20,7 @@ This is a samples settings file. Set your values in here and this will kick off 
   },
   "AllowedHosts": "*",
   "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=...;IngestionEndpoint=...",
-  "OTEL_SERVICE_NAME": "mrjb-availabilitychecks",
+  "OTEL_SERVICE_NAME": "availabilitychecks",
   "Application": {
     "LogKey": "3484991B-8304-4B3E-8784-BBDABF6DE346"
   },
@@ -44,7 +44,7 @@ This is a samples settings file. Set your values in here and this will kick off 
 ## Endpoints
 
 ### Up
-The `Up` endpoint is an availability endpoint. Kind of ironic, right?   
+There is an `Up` endpoint that is an availability endpoint. Kind of ironic, right?   
 
 ### Log Test
 I always include a key in here, it's not entirely necessary but it does add an extra gate in the process. This can reduce exploitation.   

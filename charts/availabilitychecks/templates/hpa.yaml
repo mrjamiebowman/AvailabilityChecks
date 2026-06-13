@@ -2,14 +2,14 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "mrjb-availabilitychecks.fullname" . }}
+  name: {{ include "availabilitychecks.fullname" . }}
   labels:
-    {{- include "mrjb-availabilitychecks.labels" . | nindent 4 }}
+    {{- include "availabilitychecks.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "mrjb-availabilitychecks.fullname" . }}
+    name: {{ include "availabilitychecks.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   metrics:

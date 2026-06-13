@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "mrjb-availabilitychecks.fullname" . }}
+  name: {{ include "availabilitychecks.fullname" . }}
   labels:
-    {{- include "mrjb-availabilitychecks.labels" . | nindent 4 }}
+    {{- include "availabilitychecks.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "mrjb-availabilitychecks.selectorLabels" . | nindent 6 }}
+      {{- include "availabilitychecks.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "mrjb-availabilitychecks.labels" . | nindent 8 }}
+        {{- include "availabilitychecks.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -27,7 +27,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "mrjb-availabilitychecks.serviceAccountName" . }}
+      serviceAccountName: {{ include "availabilitychecks.serviceAccountName" . }}
       {{- with .Values.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
@@ -64,22 +64,22 @@ spec:
             - name: AZURE_TENANT_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "mrjb-availabilitychecks.fullname" . }}
+                  name: {{ include "availabilitychecks.fullname" . }}
                   key: azure-tenant-id
             - name: AZURE_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "mrjb-availabilitychecks.fullname" . }}
+                  name: {{ include "availabilitychecks.fullname" . }}
                   key: azure-client-id
             - name: AZURE_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "mrjb-availabilitychecks.fullname" . }}
+                  name: {{ include "availabilitychecks.fullname" . }}
                   key: azure-client-secret
             - name: AZURE_APPCONFIG_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "mrjb-availabilitychecks.fullname" . }}
+                  name: {{ include "availabilitychecks.fullname" . }}
                   key: azure-appconfig-connection-string
             - name: AZURE_APPCONFIG_LABEL_FILTER
               value: {{ .Values.azureAppConfig.labelFilter | quote }}

@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>mrjb-availabilitychecks-eddc56b4-8e97-4245-9620-a38417359df6</UserSecretsId>
+    <UserSecretsId>availabilitychecks-eddc56b4-8e97-4245-9620-a38417359df6</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>

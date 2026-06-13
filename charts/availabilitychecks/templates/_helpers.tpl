@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "mrjb-availabilitychecks.name" -}}
+{{- define "availabilitychecks.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "mrjb-availabilitychecks.fullname" -}}
+{{- define "availabilitychecks.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "mrjb-availabilitychecks.chart" -}}
+{{- define "availabilitychecks.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "mrjb-availabilitychecks.labels" -}}
-helm.sh/chart: {{ include "mrjb-availabilitychecks.chart" . }}
-{{ include "mrjb-availabilitychecks.selectorLabels" . }}
+{{- define "availabilitychecks.labels" -}}
+helm.sh/chart: {{ include "availabilitychecks.chart" . }}
+{{ include "availabilitychecks.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "mrjb-availabilitychecks.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "mrjb-availabilitychecks.name" . }}
+{{- define "availabilitychecks.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "availabilitychecks.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "mrjb-availabilitychecks.serviceAccountName" -}}
+{{- define "availabilitychecks.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "mrjb-availabilitychecks.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "availabilitychecks.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
