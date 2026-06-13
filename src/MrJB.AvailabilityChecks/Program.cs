@@ -1,11 +1,10 @@
-using Azure.Monitor.OpenTelemetry.AspNetCore;
-using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.HttpOverrides;
 using MrJB.AvailabilityChecks;
 using MrJB.AvailabilityChecks.Domain.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Console.WriteLine("Starting: Availability Checks Service...");
 
 /******************************************/
 /*            configuration               */
