@@ -43,22 +43,28 @@ builder.Services.AddHttpClient("availability")
         client.Timeout = TimeSpan.FromSeconds(10);
     });
 
-// OpenTelemetry -> Azure Monitor / App Insights
-builder.Services
-    .AddOpenTelemetry()
-    .UseAzureMonitor(options =>
-    {
-        options.ConnectionString = applicationInsightsConnectionString;
-    });
-
-// Classic Application Insights client for TrackAvailability
-builder.Services.AddSingleton(sp =>
+// Application Insights classic SDK for TrackAvailability
+builder.Services.AddApplicationInsightsTelemetry(options =>
 {
-    var configuration = TelemetryConfiguration.CreateDefault();
-    configuration.ConnectionString = applicationInsightsConnectionString;
-
-    return new TelemetryClient(configuration);
+    options.ConnectionString = applicationInsightsConnectionString;
 });
+
+//// OpenTelemetry -> Azure Monitor / App Insights
+//builder.Services
+//    .AddOpenTelemetry()
+//    .UseAzureMonitor(options =>
+//    {
+//        options.ConnectionString = applicationInsightsConnectionString;
+//    });
+
+//// Classic Application Insights client for TrackAvailability
+//builder.Services.AddSingleton(sp =>
+//{
+//    var configuration = TelemetryConfiguration.CreateDefault();
+//    configuration.ConnectionString = applicationInsightsConnectionString;
+
+//    return new TelemetryClient(configuration);
+//});
 
 // bootstrapping
 builder.AddServiceDefaults();
