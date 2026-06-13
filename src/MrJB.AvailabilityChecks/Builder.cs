@@ -1,6 +1,5 @@
 ﻿using Azure.Identity;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
-using Serilog;
 
 namespace MrJB.AvailabilityChecks;
 
@@ -29,11 +28,11 @@ public static class Builder
             String.IsNullOrWhiteSpace(secret)
             )
         {
-            Log.Logger.Information("Azure App Configuration & Key Vault settings not found.");
+            Console.WriteLine("Azure App Configuration & Key Vault settings not found.");
             return builder;
         }
 
-        Log.Logger.Information("Setting up Azure App Config & Key Vault. App Config Label: {appConfigLabel}", labelFilter);
+        Console.WriteLine($"Setting up Azure App Config & Key Vault. App Config Label: {labelFilter}");
 
         // credentials
         var credentials = new ClientSecretCredential(tenantId, clientId, secret);

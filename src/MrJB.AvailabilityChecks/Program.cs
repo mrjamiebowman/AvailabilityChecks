@@ -4,30 +4,8 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.HttpOverrides;
 using MrJB.AvailabilityChecks;
 using MrJB.AvailabilityChecks.Domain.Configuration;
-using Serilog;
-using Serilog.Events;
-using Serilog.Sinks.SystemConsole.Themes;
 
 var builder = WebApplication.CreateBuilder(args);
-
-/******************************************/
-/*                logging                 */
-/******************************************/
-
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information()
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-    .MinimumLevel.Override("System", LogEventLevel.Warning)
-    .Enrich.FromLogContext()
-    .WriteTo.Console(
-        theme: AnsiConsoleTheme.Literate,
-        outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}"
-    )
-    .CreateBootstrapLogger();
-
-// start up log
-Log.Logger.Information("Starting up AvailabilityChecks, Environment: {environment}", builder.Environment.EnvironmentName);
 
 /******************************************/
 /*            configuration               */
@@ -47,37 +25,6 @@ builder.ConfigureAzureAppConfiguration();
 var applicationConfiguration = new ApplicationConfiguration();
 builder.Configuration.GetSection(ApplicationConfiguration.Position).Bind(applicationConfiguration);
 builder.Services.AddSingleton(applicationConfiguration);
-
-/******************************************/
-/*                serilog                 */
-/******************************************/
-
-builder.Host.UseSerilog((context, services, loggerConfiguration) =>
-{
-    var otlpEndpoint = context.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
-
-    loggerConfiguration
-        .ReadFrom.Configuration(context.Configuration)
-        .ReadFrom.Services(services)
-        .Enrich.FromLogContext()
-        .Enrich.WithProperty("Application", context.HostingEnvironment.ApplicationName)
-        .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
-        .WriteTo.Console(
-            theme: AnsiConsoleTheme.Literate,
-            outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}"
-        );
-
-    // serilog dumps the default logger and replaces it...
-    // without this serilog will block logs being shipped to otel/aspire.
-    // i.e., removet his an structured logs goes away...
-    if (!string.IsNullOrWhiteSpace(otlpEndpoint))
-    {
-        loggerConfiguration.WriteTo.OpenTelemetry(options =>
-        {
-            options.Endpoint = otlpEndpoint;
-        });
-    }
-});
 
 /******************************************/
 /*             application                */

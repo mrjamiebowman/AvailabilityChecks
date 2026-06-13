@@ -3,7 +3,6 @@ using Microsoft.ApplicationInsights.DataContracts;
 using MrJB.AvailabilityChecks.Domain.Configuration;
 using MrJB.AvailabilityChecks.ServiceDefaults;
 using System.Diagnostics;
-using static Google.Protobuf.Reflection.SourceCodeInfo.Types;
 
 namespace MrJB.AvailabilityChecks;
 
@@ -38,7 +37,7 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("[+] Starting Availability Checks Worker...");
+        _logger.LogInformation("Starting Availability Checks Worker...");
 
         while (!stoppingToken.IsCancellationRequested)
         {
