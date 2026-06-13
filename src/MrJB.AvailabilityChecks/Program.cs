@@ -26,7 +26,8 @@ Log.Logger = new LoggerConfiguration()
     )
     .CreateBootstrapLogger();
 
-Log.Logger.Information("[+] Starting up AvailabilityChecks, Environment: {environment}", builder.Environment.EnvironmentName);
+// start up log
+Log.Logger.Information("Starting up AvailabilityChecks, Environment: {environment}", builder.Environment.EnvironmentName);
 
 /******************************************/
 /*            configuration               */
@@ -36,13 +37,8 @@ builder.Configuration
     .SetBasePath(AppContext.BaseDirectory)
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddUserSecrets<Program>(optional: true)
     .AddEnvironmentVariables();
-
-// user secrets
-if (builder.Environment.IsDevelopment())
-{
-    builder.Configuration.AddUserSecrets<Program>(optional: true);
-}
 
 // azure app config
 builder.ConfigureAzureAppConfiguration();

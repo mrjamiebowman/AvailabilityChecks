@@ -29,11 +29,11 @@ public static class Builder
             String.IsNullOrWhiteSpace(secret)
             )
         {
-            Log.Logger.Information("[+] Azure App Configuration & Key Vault settings not found.");
+            Log.Logger.Information("Azure App Configuration & Key Vault settings not found.");
             return builder;
         }
 
-        Log.Logger.Information("[+] Setting up Azure App Config & Key Vault. App Config Label: {appConfigLabel}", labelFilter);
+        Log.Logger.Information("Setting up Azure App Config & Key Vault. App Config Label: {appConfigLabel}", labelFilter);
 
         // credentials
         var credentials = new ClientSecretCredential(tenantId, clientId, secret);
