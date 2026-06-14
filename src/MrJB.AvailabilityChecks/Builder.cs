@@ -12,13 +12,13 @@ public static class Builder
     public static TBuilder ConfigureAzureAppConfiguration<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
         // azure app config
-        var connStr = builder.Configuration.GetValue<string>("AZ_APPCONFIG_CONNECTION_STRING");
-        var labelFilter = builder.Configuration.GetValue<string>("AZ_APPCONFIG_LABEL_FILTER");
+        var connStr = builder.Configuration.GetValue<string>("AZURE_APPCONFIG_CONNECTION_STRING");
+        var labelFilter = builder.Configuration.GetValue<string>("AZURE_APPCONFIG_LABEL_FILTER");
 
         // client id & secret
-        var tenantId = builder.Configuration.GetValue<string>("AZ_TENANT_ID");
-        var clientId = builder.Configuration.GetValue<string>("AAD_CLIENT_ID");
-        var secret = builder.Configuration.GetValue<string>("AAD_CLIENT_SECRET");
+        var tenantId = builder.Configuration.GetValue<string>("AZURE_TENANT_ID");
+        var clientId = builder.Configuration.GetValue<string>("AZURE_CLIENT_ID");
+        var secret = builder.Configuration.GetValue<string>("AZURE_CLIENT_SECRET");
 
         // validate configuration settings
         if (String.IsNullOrWhiteSpace(connStr) ||
