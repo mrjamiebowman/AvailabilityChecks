@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.4.3">
+<Project Sdk="Aspire.AppHost.Sdk/13.4.4">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -9,6 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\MrJB.AvailabilityChecks\MrJB.AvailabilityChecks.csproj" />
+    <ProjectReference Include="..\..\src\CoreMS.AvailabilityChecks\CoreMS.AvailabilityChecks.csproj" />
   </ItemGroup>
 </Project>

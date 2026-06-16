@@ -1,7 +1,7 @@
 ﻿using Azure.Identity;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 
-namespace MrJB.AvailabilityChecks;
+namespace CoreMS.AvailabilityChecks;
 
 public static class Builder
 {

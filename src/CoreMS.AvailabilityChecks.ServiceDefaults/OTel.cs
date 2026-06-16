@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.Metrics;
 
-namespace MrJB.AvailabilityChecks.ServiceDefaults;
+namespace CoreMS.AvailabilityChecks.ServiceDefaults;
 
 public static class OTel
 {

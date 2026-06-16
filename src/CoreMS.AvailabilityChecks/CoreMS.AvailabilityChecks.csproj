@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MrJB.AvailabilityChecks.ServiceDefaults\MrJB.AvailabilityChecks.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\CoreMS.AvailabilityChecks.ServiceDefaults\CoreMS.AvailabilityChecks.ServiceDefaults.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,7 @@
+using CoreMS.AvailabilityChecks;
+using CoreMS.AvailabilityChecks.Domain.Configuration;
+using CoreMS.AvailabilityChecks.ServiceDefaults;
 using Microsoft.AspNetCore.HttpOverrides;
-using MrJB.AvailabilityChecks;
-using MrJB.AvailabilityChecks.Domain.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 

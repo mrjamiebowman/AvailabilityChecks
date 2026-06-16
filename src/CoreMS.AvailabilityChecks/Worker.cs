@@ -1,10 +1,10 @@
-﻿using Microsoft.ApplicationInsights;
+﻿using CoreMS.AvailabilityChecks.Domain.Configuration;
+using CoreMS.AvailabilityChecks.ServiceDefaults;
+using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
-using MrJB.AvailabilityChecks.Domain.Configuration;
-using MrJB.AvailabilityChecks.ServiceDefaults;
 using System.Diagnostics;
 
-namespace MrJB.AvailabilityChecks;
+namespace CoreMS.AvailabilityChecks;
 
 public class Worker : BackgroundService
 {

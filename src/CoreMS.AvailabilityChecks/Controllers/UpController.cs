@@ -1,8 +1,8 @@
+using CoreMS.AvailabilityChecks.Domain.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MrJB.AvailabilityChecks.Domain.Configuration;
 
-namespace MrJB.AvailabilityChecks.Controllers;
+namespace CoreMS.AvailabilityChecks.Controllers;
 
 [ApiController]
 [Route("[controller]")]

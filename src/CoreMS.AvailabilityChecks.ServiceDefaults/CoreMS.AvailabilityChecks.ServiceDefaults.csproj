@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MrJB.AvailabilityChecks.Domain\MrJB.AvailabilityChecks.Domain.csproj" />
+    <ProjectReference Include="..\CoreMS.AvailabilityChecks.Domain\CoreMS.AvailabilityChecks.Domain.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace MrJB.AvailabilityChecks.ServiceDefaults;
+﻿namespace CoreMS.AvailabilityChecks.ServiceDefaults;
 
 public static class Spans
 {

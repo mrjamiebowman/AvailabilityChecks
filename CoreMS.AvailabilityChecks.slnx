@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/.Solution Items/">
+    <File Path=".gitignore" />
+    <File Path="build.ps1" />
+    <File Path="helm-install.ps1" />
+    <File Path="helm-template.ps1" />
+    <File Path="helm-uninstall.ps1" />
+    <File Path="push.ps1" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/aspire/">
+    <Project Path="aspire/CoreMS.AvailabilityChecks.AppHost/CoreMS.AvailabilityChecks.AppHost.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/CoreMS.AvailabilityChecks.Domain/CoreMS.AvailabilityChecks.Domain.csproj" />
+    <Project Path="src/CoreMS.AvailabilityChecks.ServiceDefaults/CoreMS.AvailabilityChecks.ServiceDefaults.csproj" />
+    <Project Path="src/CoreMS.AvailabilityChecks/CoreMS.AvailabilityChecks.csproj" />
+  </Folder>
+</Solution>

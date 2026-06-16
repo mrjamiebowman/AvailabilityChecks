@@ -1,4 +1,4 @@
-﻿namespace MrJB.AvailabilityChecks.Domain.Configuration;
+﻿namespace CoreMS.AvailabilityChecks.Domain.Configuration;
 
 public class ApplicationConfiguration
 {
