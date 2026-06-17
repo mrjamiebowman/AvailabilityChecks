@@ -22,14 +22,16 @@ public static class OTel
     {
         public static Meter Meter = new Meter(ApplicationName, "1.0.0");
 
-        public static readonly Counter<long> AvailabilityCheck = Meter.CreateCounter<long>("availability_check");
-
-        public static readonly Histogram<double> AvailabilityDurationMs = Meter.CreateHistogram<double>("availability_check_duration_ms");
-
         public static class Names
         {
-            public static string UserKnownIssues = $"{BasePath}.check";
+            public static string AvailabilityCheck = $"{BasePath}.availability_check";
+
+            public static string AvailabilityCheckDurationMs = $"{BasePath}.availability_check_duration_ms";
         }
+
+        public static readonly Counter<long> AvailabilityCheck = Meter.CreateCounter<long>(Names.AvailabilityCheck);
+
+        public static readonly Histogram<double> AvailabilityDurationMs = Meter.CreateHistogram<double>(Names.AvailabilityCheckDurationMs);
 
         public static void AddAvailabilityCheck(int c = 1, TagList tagList = default) => AvailabilityCheck.Add(c, tagList);
     }
