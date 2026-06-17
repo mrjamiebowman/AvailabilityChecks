@@ -13,19 +13,19 @@ ENV ASPNETCORE_URLS "http://+:8080"
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/MrJB.AvailabilityChecks/MrJB.AvailabilityChecks.csproj", "src/MrJB.AvailabilityChecks/"]
-RUN dotnet restore "./src/MrJB.AvailabilityChecks/MrJB.AvailabilityChecks.csproj"
+COPY ["src/CoreMS.AvailabilityChecks/CoreMS.AvailabilityChecks.csproj", "src/CoreMS.AvailabilityChecks/"]
+RUN dotnet restore "./src/CoreMS.AvailabilityChecks/CoreMS.AvailabilityChecks.csproj"
 COPY . .
-WORKDIR "/src/src/MrJB.AvailabilityChecks"
-RUN dotnet build "./MrJB.AvailabilityChecks.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/src/CoreMS.AvailabilityChecks"
+RUN dotnet build "./CoreMS.AvailabilityChecks.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # publish
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./MrJB.AvailabilityChecks.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./CoreMS.AvailabilityChecks.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # final
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "MrJB.AvailabilityChecks.dll"]
+ENTRYPOINT ["dotnet", "CoreMS.AvailabilityChecks.dll"]
