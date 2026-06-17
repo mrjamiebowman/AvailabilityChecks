@@ -5,11 +5,11 @@ namespace CoreMS.AvailabilityChecks.ServiceDefaults;
 
 public static class OTel
 {
-    public static string ApplicationName { get; set; } = "MrJB.AvailabilityChecks";
+    public static string ApplicationName { get; set; } = "CoreMS.AvailabilityChecks";
 
     public static string ServiceVersion { get; set; } = "1.0.0";
 
-    public static string BasePath { get; set; } = "mrjamiebowman.availabilitychecks";
+    public static string BasePath { get; set; } = "corems.availabilitychecks";
 
     public static readonly ActivitySource ActivitySource = new ActivitySource(ApplicationName);
 
